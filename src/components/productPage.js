@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {deleteProductById, getAllGroups, getProductById, updateProductById} from "../apiQueries";
+import {createProduct, deleteProductById, getAllGroups, getProductById, updateProductById} from "../apiQueries";
 
-const ProductPage = () => {
+const ProductPage = (props) => {
 
     const id = window.location.toString().split("/").slice(-1)[0];
+    const form = React.createRef();
+    const validate = React.createRef();
 
     const [name,setName] = useState("");
     const [manufacturer,setManufacturer] = useState("");
@@ -14,12 +16,50 @@ const ProductPage = () => {
 
     const [groups, setGroups] = useState([]);
 
+    const validateForm = (e) => {
+        e.preventDefault();
+        return false;
+    }
+
+    const createNewProduct = async (product) => {
+        return await createProduct(product);
+    }
+
+    const submitCreateProduct = (e) => {
+        e.preventDefault();
+        if(!form.current.checkValidity()) {
+            validate.current.click();
+            return;
+        }
+        const product = {
+            name: name,
+            manufacturer: manufacturer,
+            description: description,
+            price: price,
+            quantity: 0,
+            groupId: groups.find(it => it.name===group).id
+        }
+        console.log(product);
+        createNewProduct(product).then(result => {
+            if(result.status===201){
+                alert("Product successfully created!");
+                window.location = `/products/${result.result.id}`
+            } else {
+                alert(result.result);
+            }
+        })
+    }
+
     const updateProduct = async (id, product) => {
         return await updateProductById(id, product);
     }
 
     const submitUpdateProduct = (e) => {
         e.preventDefault();
+        if(!form.current.checkValidity()) {
+            validate.current.click();
+            return;
+        }
         const product = {
             id: id,
             name: name,
@@ -64,36 +104,52 @@ const ProductPage = () => {
     }
 
     const init = (id) => {
-        Promise.all([getProduct(id),getGroups()]).then(results => {
-            const res1 = results[0];
-            const res2 = results[1];
-            if(res1.status===200 && res2.status===200){
-                const product = res1.result;
-                const groupsRes = res2.result;
-                setName(product.name);
-                setManufacturer(product.manufacturer);
-                setGroup(groupsRes.find(it => it.id===product.groupId).name);
-                setPrice(product.price);
-                setQuantity(product.quantity);
-                setDescription(product.description);
-                setGroups(groupsRes);
-            } else {
-                let error = "";
-                if(res1.status===403 && res2.status===403){
-                    error = res1.result;
+        if(!props.create){
+            Promise.all([getProduct(id),getGroups()]).then(results => {
+                const res1 = results[0];
+                const res2 = results[1];
+                if(res1.status===200 && res2.status===200){
+                    const product = res1.result;
+                    const groupsRes = res2.result;
+                    setName(product.name);
+                    setManufacturer(product.manufacturer);
+                    setGroup(groupsRes.find(it => it.id===product.groupId).name);
+                    setPrice(product.price);
+                    setQuantity(product.quantity);
+                    setDescription(product.description);
+                    setGroups(groupsRes);
                 } else {
-                    if(res1.status!==200) error+=res1.result;
-                    if(res2.status!==200) {
-                        if(error!=="") error+='\n';
-                        error+=res2.result;
+                    let error = "";
+                    if(res1.status===403 && res2.status===403){
+                        error = res1.result;
+                    } else {
+                        if(res1.status!==200) error+=res1.result;
+                        if(res2.status!==200) {
+                            if(error!=="") error+='\n';
+                            error+=res2.result;
+                        }
                     }
+                    alert(error);
+                    window.location = "/products";
                 }
-                alert(error);
-                window.location = "/products";
-            }
-            console.log(res1);
-            console.log(res2);
-        });
+                console.log(res1);
+                console.log(res2);
+            });
+        } else {
+            getGroups().then(result => {
+                if(result.status===200){
+                    if(result.result.length===0){
+                        alert("No groups created!");
+                        window.location = "/products";
+                    }else{
+                        setGroups(result.result);
+                    }
+                } else {
+                    alert(result.result);
+                    window.location = "/products";
+                }
+            });
+        }
     }
 
     useEffect(() => {
@@ -102,7 +158,7 @@ const ProductPage = () => {
 
     return(
         <div className="ProductPage">
-            <form id="form" className="m-5">
+            <form id="form" ref={form} className="m-5" onSubmit={(e) => validateForm(e)}>
                 <div className="form-group mt-3 mb-3">
                     <label htmlFor="name">Name</label>
                     <input required name="name" type="text" className="form-control" id="name"
@@ -143,17 +199,24 @@ const ProductPage = () => {
                               onChange={(e) => setDescription(e.target.value)} />
                 </div>
                 <div className="form-group d-flex justify-content-end">
-                    <button id="updateBtn" className="btn btn-success mt-3 me-2" type="button"
-                            onClick={(e) => submitUpdateProduct(e)}>
-                        Update
-                    </button>
-                    <button id="deleteBtn" className="btn btn-danger mt-3" type="button"
-                            onClick={(e) => submitDeleteProduct(e)}>
-                        Delete
-                    </button>
-                    {/*<button type="submit" id="createBtn" className="btn btn-success mt-3" formAction="/settings/create"*/}
-                    {/*        formMethod="post">Create*/}
-                    {/*</button>*/}
+                    {props.create ?
+                        <button id="createBtn" className="btn btn-success mt-3" type="button"
+                                onClick={(e) => submitCreateProduct(e)}>
+                            Create
+                        </button>
+                        :
+                        <>
+                            <button id="updateBtn" className="btn btn-success mt-3 me-2" type="button"
+                                    onClick={(e) => submitUpdateProduct(e)}>
+                                Update
+                            </button>
+                            <button id="deleteBtn" className="btn btn-danger mt-3" type="button"
+                                    onClick={(e) => submitDeleteProduct(e)}>
+                                Delete
+                            </button>
+                        </>
+                    }
+                    <button ref={validate} hidden type="submit">submit</button>
                 </div>
             </form>
         </div>

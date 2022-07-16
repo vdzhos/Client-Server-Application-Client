@@ -13,9 +13,11 @@ const App = () => {
           <Routes>
               <Route path="/"/>
               <Route path="/products" element={<ProductsMain/>}/>
-              <Route path="/products/:id" element={<ProductPage/>}/>
+              <Route path="/products/:id" element={<ProductPage create={false}/>}/>
               <Route path="/groups" element={<GroupsMain/>}/>
               <Route path="/statistics" element={<StatisticsMain/>}/>
+              <Route path="/create-product" element={<ProductPage create={true}/>}/>
+              <Route path="/create-group" />
           </Routes>
       </div>
   );

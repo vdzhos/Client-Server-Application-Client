@@ -1,7 +1,7 @@
 const baseUrl = "https://localhost:8080/api/";
 const productsBaseUrl = `${baseUrl}products`;
 const groupsBaseUrl = `${baseUrl}groups`;
-const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTkxMzI0LCJleHAiOjE2NTc5OTIyMjR9.7zYdK1TbDn3aEUJoBWAreHj9t5NPRJlQzjHriyhmg2s';
+const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTk1NzM5LCJleHAiOjE2NTc5OTY2Mzl9.vMr5ukiwCEMctrCqYmYcfDgnPYz-GF_laPrxxrQUU5E';
 
 const criteriaProductParams = ["textInName","textInDescription","textInManufacturer",
     "lowerPrice","upperPrice","lowerQuantity","upperQuantity"];
@@ -116,6 +116,29 @@ export async function updateProductById(id, product){
     } else {
         if(response.status!==200){
             const json = await response.json();
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function createProduct(product){
+    const response = await fetch (productsBaseUrl,
+        {
+            method: 'POST',
+            headers: {
+                Jwt: jwt
+            },
+            body: JSON.stringify(product)
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        const json = await response.json();
+        if(response.status===201){
+            result["result"] = json["product"];
+        } else {
             result["result"] = json["error"];
         }
     }
