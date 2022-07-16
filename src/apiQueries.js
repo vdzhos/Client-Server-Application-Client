@@ -2,7 +2,7 @@ const baseUrl = "https://localhost:8080/api/";
 const totalPriceUrl = `${baseUrl}statistics/total_price`;
 const productsBaseUrl = `${baseUrl}products`;
 const groupsBaseUrl = `${baseUrl}groups`;
-const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU4MDA0MzA0LCJleHAiOjE2NTgwMDUyMDR9.b5wsS2Qnt3Z_U3daAORvQO28UmYWl4lS8UwRHGRDfws';
+const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU4MDA4MDI2LCJleHAiOjE2NTgwMDg5MjZ9.ItqqZuJ8n4zLsvhM0rKYYtdtZLp0PDBFsT8GL_wdMJU';
 
 const criteriaProductParams = ["textInName","textInDescription","textInManufacturer",
     "lowerPrice","upperPrice","lowerQuantity","upperQuantity"];
@@ -277,6 +277,70 @@ export async function getGroupTotalPrice(id){
         if(response.status===200){
             result["result"] = json["total_price"];
         } else {
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function createGroup(group){
+    const response = await fetch (groupsBaseUrl,
+        {
+            method: 'POST',
+            headers: {
+                Jwt: jwt
+            },
+            body: JSON.stringify(group)
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        const json = await response.json();
+        if(response.status===201){
+            result["result"] = json["group"];
+        } else {
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function updateGroupById(id, group){
+    const response = await fetch (groupsBaseUrl + `/${id}`,
+        {
+            method: 'PUT',
+            headers: {
+                Jwt: jwt
+            },
+            body: JSON.stringify(group)
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        if(response.status!==200){
+            const json = await response.json();
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function deleteGroupById(id){
+    const response = await fetch (groupsBaseUrl + `/${id}`,
+        {
+            method: 'DELETE',
+            headers: {
+                Jwt: jwt
+            }
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        if(response.status!==204){
+            const json = await response.json();
             result["result"] = json["error"];
         }
     }

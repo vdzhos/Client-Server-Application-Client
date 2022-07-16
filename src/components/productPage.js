@@ -144,6 +144,7 @@ const ProductPage = (props) => {
                         window.location = "/products";
                     }else{
                         setGroups(result.result);
+                        setGroup(result.result[0].name);
                     }
                 } else {
                     alert(result.result);
