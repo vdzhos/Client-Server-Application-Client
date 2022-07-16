@@ -17,13 +17,14 @@ const ProductsMain = () => {
                 setProducts(result.result);
             } else {
                 setProducts([]);
+                alert(result.result);
             }
             console.log(result);
         });
     }
 
     useEffect(() => {
-        filterProducts(["","","","","","",""])
+        filterProducts(["","","","","","",""]);
     }, []);
 
     return(

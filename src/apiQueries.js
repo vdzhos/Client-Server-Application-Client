@@ -1,7 +1,7 @@
 const baseUrl = "https://localhost:8080/api/";
 const productsBaseUrl = `${baseUrl}products`;
 const groupsBaseUrl = `${baseUrl}groups`;
-const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTg2MzEwLCJleHAiOjE2NTc5ODcyMTB9.mwJlx4LTeEIn-zwxM-ceIfiIeLiLlwuwfHixbFgHv7E';
+const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTg4MDIwLCJleHAiOjE2NTc5ODg5MjB9.0LqhdZISU6kbFpiod9TOanqrBBucAEM9_IFSBIuEKsI';
 
 const criteriaProductParams = ["textInName","textInDescription","textInManufacturer",
     "lowerPrice","upperPrice","lowerQuantity","upperQuantity"];
@@ -10,20 +10,20 @@ const criteriaProductLength = criteriaProductParams.length;
 const criteriaGroupParams = ["textInName","textInDescription"];
 const criteriaGroupLength = criteriaGroupParams.length;
 
-function createProductCriteria(filterArray){
-    if(filterArray.length!==criteriaProductLength) throw "Can't happen";
-    let query = "";
-    for (let i = 0; i < criteriaProductLength; i++) {
-        if(filterArray[i]!=="") query = appendToQuery(query,`${criteriaProductParams[i]}=${filterArray[i]}`);
-    }
-    return query;
-}
-
 function createGroupCriteria(filterArray){
     if(filterArray.length!==criteriaGroupLength) throw "Can't happen";
     let query = "";
     for (let i = 0; i < criteriaGroupLength; i++) {
         if(filterArray[i]!=="") query = appendToQuery(query,`${criteriaGroupParams[i]}=${filterArray[i]}`);
+    }
+    return query;
+}
+
+function createProductCriteria(filterArray){
+    if(filterArray.length!==criteriaProductLength) throw "Can't happen";
+    let query = "";
+    for (let i = 0; i < criteriaProductLength; i++) {
+        if(filterArray[i]!=="") query = appendToQuery(query,`${criteriaProductParams[i]}=${filterArray[i]}`);
     }
     return query;
 }
@@ -54,6 +54,48 @@ export async function getAllProducts(filterArray){
         if(response.status===200){
             result["result"] = json["products"];
         } else {
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function getProductById(id){
+    const response = await fetch (productsBaseUrl + `/${id}`,
+        {
+            method: 'GET',
+            headers: {
+                Jwt: jwt
+            }
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        const json = await response.json();
+        if(response.status===200){
+            result["result"] = json["product"];
+        } else {
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function deleteProductById(id){
+    const response = await fetch (productsBaseUrl + `/${id}`,
+        {
+            method: 'DELETE',
+            headers: {
+                Jwt: jwt
+            }
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        if(response.status!==204){
+            const json = await response.json();
             result["result"] = json["error"];
         }
     }
