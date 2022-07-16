@@ -1,7 +1,7 @@
 const baseUrl = "https://localhost:8080/api/";
 const productsBaseUrl = `${baseUrl}products`;
 const groupsBaseUrl = `${baseUrl}groups`;
-const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTg5ODgyLCJleHAiOjE2NTc5OTA3ODJ9.Jc2QEaHXgfqSrZo0nTtjtwjg2rgGOCjQq9HWtGLGVCU';
+const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTkxMzI0LCJleHAiOjE2NTc5OTIyMjR9.7zYdK1TbDn3aEUJoBWAreHj9t5NPRJlQzjHriyhmg2s';
 
 const criteriaProductParams = ["textInName","textInDescription","textInManufacturer",
     "lowerPrice","upperPrice","lowerQuantity","upperQuantity"];
@@ -94,6 +94,27 @@ export async function deleteProductById(id){
         result["result"] = "Forbidden! Not Authorized!"
     } else {
         if(response.status!==204){
+            const json = await response.json();
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function updateProductById(id, product){
+    const response = await fetch (productsBaseUrl + `/${id}`,
+        {
+            method: 'PUT',
+            headers: {
+                Jwt: jwt
+            },
+            body: JSON.stringify(product)
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        if(response.status!==200){
             const json = await response.json();
             result["result"] = json["error"];
         }

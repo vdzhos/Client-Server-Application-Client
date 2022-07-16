@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {deleteProductById, getAllGroups, getProductById} from "../apiQueries";
-import Product from "./Product";
+import {deleteProductById, getAllGroups, getProductById, updateProductById} from "../apiQueries";
 
 const ProductPage = () => {
 
@@ -10,13 +9,34 @@ const ProductPage = () => {
     const [manufacturer,setManufacturer] = useState("");
     const [group,setGroup] = useState("");
     const [price,setPrice] = useState("");
+    const [quantity,setQuantity] = useState("");
     const [description,setDescription] = useState("");
 
     const [groups, setGroups] = useState([]);
 
+    const updateProduct = async (id, product) => {
+        return await updateProductById(id, product);
+    }
+
     const submitUpdateProduct = (e) => {
         e.preventDefault();
-        console.log("Update!");
+        const product = {
+            id: id,
+            name: name,
+            manufacturer: manufacturer,
+            description: description,
+            price: price,
+            quantity: quantity,
+            groupId: groups.find(it => it.name===group).id
+        }
+        console.log(product);
+        updateProduct(id,product).then(result => {
+            if(result.status===200){
+                alert("Product successfully updated!");
+            } else {
+                alert(result.result);
+            }
+        });
     }
 
     const deleteProduct = async (id) => {
@@ -54,6 +74,7 @@ const ProductPage = () => {
                 setManufacturer(product.manufacturer);
                 setGroup(groupsRes.find(it => it.id===product.groupId).name);
                 setPrice(product.price);
+                setQuantity(product.quantity);
                 setDescription(product.description);
                 setGroups(groupsRes);
             } else {
