@@ -1,7 +1,7 @@
 const baseUrl = "https://localhost:8080/api/";
 const productsBaseUrl = `${baseUrl}products`;
 const groupsBaseUrl = `${baseUrl}groups`;
-const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTk1NzM5LCJleHAiOjE2NTc5OTY2Mzl9.vMr5ukiwCEMctrCqYmYcfDgnPYz-GF_laPrxxrQUU5E';
+const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU4MDA0MzA0LCJleHAiOjE2NTgwMDUyMDR9.b5wsS2Qnt3Z_U3daAORvQO28UmYWl4lS8UwRHGRDfws';
 
 const criteriaProductParams = ["textInName","textInDescription","textInManufacturer",
     "lowerPrice","upperPrice","lowerQuantity","upperQuantity"];
@@ -145,6 +145,74 @@ export async function createProduct(product){
     return result;
 }
 
+export async function getProductQuantity(id){
+    const response = await fetch (productsBaseUrl + `/quantity/${id}`,
+        {
+            method: 'GET',
+            headers: {
+                Jwt: jwt
+            }
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        const json = await response.json();
+        if(response.status===200){
+            result["result"] = json["quantity"];
+        } else {
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function increaseProductQuantity(id, quantity){
+    const response = await fetch (productsBaseUrl + `/increase/${id}`,
+        {
+            method: 'POST',
+            headers: {
+                Jwt: jwt
+            },
+            body: JSON.stringify(quantity)
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        const json = await response.json();
+        if(response.status===200){
+            result["result"] = json["quantity"];
+        } else {
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
+export async function decreaseProductQuantity(id, quantity){
+    const response = await fetch (productsBaseUrl + `/decrease/${id}`,
+        {
+            method: 'POST',
+            headers: {
+                Jwt: jwt
+            },
+            body: JSON.stringify(quantity)
+        });
+    const result = { status: response.status };
+    if(response.status===403){
+        result["result"] = "Forbidden! Not Authorized!"
+    } else {
+        const json = await response.json();
+        if(response.status===200){
+            result["result"] = json["quantity"];
+        } else {
+            result["result"] = json["error"];
+        }
+    }
+    return result;
+}
+
 export async function getAllGroups(filterArray){
     const criteria = createGroupCriteria(filterArray);
     const url = groupsBaseUrl + criteria;
@@ -168,3 +236,4 @@ export async function getAllGroups(filterArray){
     }
     return result;
 }
+

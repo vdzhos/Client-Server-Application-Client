@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {createProduct, deleteProductById, getAllGroups, getProductById, updateProductById} from "../apiQueries";
+import QuantityPanel from "./quantityPanel";
 
 const ProductPage = (props) => {
 
@@ -156,69 +157,96 @@ const ProductPage = (props) => {
         init(id);
     }, []);
 
+    const getQuantity = () => {
+        return quantity;
+    }
+
     return(
         <div className="ProductPage">
-            <form id="form" ref={form} className="m-5" onSubmit={(e) => validateForm(e)}>
-                <div className="form-group mt-3 mb-3">
-                    <label htmlFor="name">Name</label>
-                    <input required name="name" type="text" className="form-control" id="name"
-                           placeholder="Enter name"
-                           value={name}
-                           onChange={(e) => setName(e.target.value)} />
-                </div>
-                <div className="form-group mb-3">
-                    <label htmlFor="group">Group</label>
-                    <select required className="form-control" id="group" name="group"
-                            value={group}
-                            onChange={(e) => setGroup(e.target.value)}>
-                        {groups.map((it) => (
-                            <option key={it.id}
-                            >{it.name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="form-group mb-3">
-                    <label htmlFor="manufacturer">Manufacturer</label>
-                    <input required name="manufacturer" type="text" className="form-control" id="manufacturer"
-                           placeholder="Enter manufacturer"
-                           value={manufacturer}
-                           onChange={(e) => setManufacturer(e.target.value)} />
-                </div>
-                <div className="form-group mb-3">
-                    <label htmlFor="price">Price</label>
-                    <input required name="price" type="number" step="0.01" min="0.01" className="form-control" id="price"
-                           placeholder="Enter price"
-                           value={price}
-                           onChange={(e) => setPrice(e.target.value)} />
-                </div>
-                <div className="form-group mb-3">
-                    <label htmlFor="description">Description</label>
-                    <textarea required name="description" className="form-control" id="description" rows="5"
-                              placeholder="Enter description"
-                              value={description}
-                              onChange={(e) => setDescription(e.target.value)} />
-                </div>
-                <div className="form-group d-flex justify-content-end">
-                    {props.create ?
-                        <button id="createBtn" className="btn btn-success mt-3" type="button"
-                                onClick={(e) => submitCreateProduct(e)}>
-                            Create
-                        </button>
+            <div>
+                {!props.create ?
+                    <>
+                        <h3 className="mx-5 mt-4">Manage product quantity in storage</h3>
+                        <QuantityPanel setQuantity={setQuantity} id={id} getQuantity={getQuantity}/>
+                        <h3 className="mx-5">Edit product information</h3>
+                    </>
+                    :
+                    <>
+                        <h3 className="mx-5 mt-4">Create a new product</h3>
+                    </>
+                }
+                <form id="form" ref={form} className="mx-5 my-3" onSubmit={(e) => validateForm(e)}>
+                    <div className="form-group mt-3 mb-3">
+                        <label htmlFor="name">Name</label>
+                        <input required name="name" type="text" className="form-control" id="name"
+                               placeholder="Enter name"
+                               value={name}
+                               onChange={(e) => setName(e.target.value)} />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="group">Group</label>
+                        <select required className="form-control" id="group" name="group"
+                                value={group}
+                                onChange={(e) => setGroup(e.target.value)}>
+                            {groups.map((it) => (
+                                <option key={it.id}
+                                >{it.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="manufacturer">Manufacturer</label>
+                        <input required name="manufacturer" type="text" className="form-control" id="manufacturer"
+                               placeholder="Enter manufacturer"
+                               value={manufacturer}
+                               onChange={(e) => setManufacturer(e.target.value)} />
+                    </div>
+                    <div className="form-group mb-3">
+                        <label htmlFor="price">Price</label>
+                        <input required name="price" type="number" step="0.01" min="0.01" className="form-control" id="price"
+                               placeholder="Enter price"
+                               value={price}
+                               onChange={(e) => setPrice(e.target.value)} />
+                    </div>
+                    {!props.create ?
+                        <div className="form-group mb-3">
+                            <label htmlFor="quantity">Quantity</label>
+                            <input disabled required name="quantity" type="number" step="0.01" min="0.01" className="form-control" id="quantity"
+                                   value={quantity}
+                                   onChange={(e) => setQuantity(e.target.value)} />
+                        </div>
                         :
-                        <>
-                            <button id="updateBtn" className="btn btn-success mt-3 me-2" type="button"
-                                    onClick={(e) => submitUpdateProduct(e)}>
-                                Update
-                            </button>
-                            <button id="deleteBtn" className="btn btn-danger mt-3" type="button"
-                                    onClick={(e) => submitDeleteProduct(e)}>
-                                Delete
-                            </button>
-                        </>
+                        <></>
                     }
-                    <button ref={validate} hidden type="submit">submit</button>
-                </div>
-            </form>
+                    <div className="form-group mb-3">
+                        <label htmlFor="description">Description</label>
+                        <textarea required name="description" className="form-control" id="description" rows="5"
+                                  placeholder="Enter description"
+                                  value={description}
+                                  onChange={(e) => setDescription(e.target.value)} />
+                    </div>
+                    <div className="form-group d-flex justify-content-end">
+                        {props.create ?
+                            <button id="createBtn" className="btn btn-success mt-3" type="button"
+                                    onClick={(e) => submitCreateProduct(e)}>
+                                Create
+                            </button>
+                            :
+                            <>
+                                <button id="updateBtn" className="btn btn-success mt-3 me-2" type="button"
+                                        onClick={(e) => submitUpdateProduct(e)}>
+                                    Update
+                                </button>
+                                <button id="deleteBtn" className="btn btn-danger mt-3" type="button"
+                                        onClick={(e) => submitDeleteProduct(e)}>
+                                    Delete
+                                </button>
+                            </>
+                        }
+                        <button ref={validate} hidden type="submit">submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }
