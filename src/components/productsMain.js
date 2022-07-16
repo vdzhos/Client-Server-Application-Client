@@ -1,22 +1,35 @@
 import React, {useEffect, useState} from "react";
 import {getAllProducts} from "../apiQueries";
+import Product from "./Product";
 
 const ProductsMain = () => {
 
     const [products,setProducts] = useState([]);
 
     const getProducts = async () => {
-        const result = await getAllProducts();
-        console.log(result)
+        return await getAllProducts();
     }
 
     useEffect(() => {
-        getProducts();
+        getProducts().then( result => {
+            if(result.status===200){
+                setProducts(result.result);
+            } else {
+                setProducts([]);
+            }
+            console.log(result);
+        });
     }, []);
 
     return(
         <div className="ProductsMain">
-            <h1>ProductsMain</h1>
+            <div className="productsContainer">
+                {products.map((it) => (
+                    <div key={it.id} className="m-3">
+                        <Product product={it}/>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
