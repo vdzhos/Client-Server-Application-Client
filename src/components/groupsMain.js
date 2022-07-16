@@ -23,7 +23,7 @@ const GroupsMain = () => {
     }
 
     useEffect(() => {
-        filterGroups(["",""])
+        filterGroups(["",""]);
     }, []);
 
     return(

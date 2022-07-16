@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {deleteProductById, getProductById} from "../apiQueries";
+import {deleteProductById, getAllGroups, getProductById} from "../apiQueries";
+import Product from "./Product";
 
 const ProductPage = () => {
 
@@ -7,8 +8,11 @@ const ProductPage = () => {
 
     const [name,setName] = useState("");
     const [manufacturer,setManufacturer] = useState("");
+    const [group,setGroup] = useState("");
     const [price,setPrice] = useState("");
     const [description,setDescription] = useState("");
+
+    const [groups, setGroups] = useState([]);
 
     const submitUpdateProduct = (e) => {
         e.preventDefault();
@@ -31,28 +35,48 @@ const ProductPage = () => {
         });
     }
 
-    const getProduct = async (url) => {
-        return await getProductById(url);
+    const getProduct = async (id) => {
+        return await getProductById(id);
     }
 
-    const getInitProduct = (url) => {
-        getProduct(url).then(result => {
-            if(result.status===200){
-                const product = result.result;
+    const getGroups = async () => {
+        return await getAllGroups(["",""]);
+    }
+
+    const init = (id) => {
+        Promise.all([getProduct(id),getGroups()]).then(results => {
+            const res1 = results[0];
+            const res2 = results[1];
+            if(res1.status===200 && res2.status===200){
+                const product = res1.result;
+                const groupsRes = res2.result;
                 setName(product.name);
                 setManufacturer(product.manufacturer);
+                setGroup(groupsRes.find(it => it.id===product.groupId).name);
                 setPrice(product.price);
                 setDescription(product.description);
+                setGroups(groupsRes);
             } else {
-                alert(result.result);
-                window.location = "/products"
+                let error = "";
+                if(res1.status===403 && res2.status===403){
+                    error = res1.result;
+                } else {
+                    if(res1.status!==200) error+=res1.result;
+                    if(res2.status!==200) {
+                        if(error!=="") error+='\n';
+                        error+=res2.result;
+                    }
+                }
+                alert(error);
+                window.location = "/products";
             }
-            console.log(result);
+            console.log(res1);
+            console.log(res2);
         });
     }
 
     useEffect(() => {
-        getInitProduct(id);
+        init(id);
     }, []);
 
     return(
@@ -67,9 +91,13 @@ const ProductPage = () => {
                 </div>
                 <div className="form-group mb-3">
                     <label htmlFor="group">Group</label>
-                    <select className="form-control" id="group" name="group">
-                        <option>1</option>
-                        <option>2</option>
+                    <select required className="form-control" id="group" name="group"
+                            value={group}
+                            onChange={(e) => setGroup(e.target.value)}>
+                        {groups.map((it) => (
+                            <option key={it.id}
+                            >{it.name}</option>
+                        ))}
                     </select>
                 </div>
                 <div className="form-group mb-3">

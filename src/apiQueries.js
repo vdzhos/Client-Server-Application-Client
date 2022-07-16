@@ -1,7 +1,7 @@
 const baseUrl = "https://localhost:8080/api/";
 const productsBaseUrl = `${baseUrl}products`;
 const groupsBaseUrl = `${baseUrl}groups`;
-const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTg4MDIwLCJleHAiOjE2NTc5ODg5MjB9.0LqhdZISU6kbFpiod9TOanqrBBucAEM9_IFSBIuEKsI';
+const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU3OTg5ODgyLCJleHAiOjE2NTc5OTA3ODJ9.Jc2QEaHXgfqSrZo0nTtjtwjg2rgGOCjQq9HWtGLGVCU';
 
 const criteriaProductParams = ["textInName","textInDescription","textInManufacturer",
     "lowerPrice","upperPrice","lowerQuantity","upperQuantity"];
@@ -38,7 +38,6 @@ function appendToQuery(query, str){
 export async function getAllProducts(filterArray){
     const criteria = createProductCriteria(filterArray);
     const url = productsBaseUrl + criteria;
-    console.log(`Url: ${url}`);
     const response = await fetch (url,
         {
             method: 'GET',
@@ -105,7 +104,6 @@ export async function deleteProductById(id){
 export async function getAllGroups(filterArray){
     const criteria = createGroupCriteria(filterArray);
     const url = groupsBaseUrl + criteria;
-    console.log(`Url: ${url}`);
     const response = await fetch (url,
         {
             method: 'GET',
@@ -113,9 +111,7 @@ export async function getAllGroups(filterArray){
                 Jwt: jwt
             }
         });
-    console.log(response.status);
     const result = { status: response.status };
-    console.log(result);
     if(response.status===403){
         result["result"] = "Forbidden! Not Authorized!"
     } else {
@@ -126,6 +122,5 @@ export async function getAllGroups(filterArray){
             result["result"] = json["error"];
         }
     }
-    console.log(result);
     return result;
 }
