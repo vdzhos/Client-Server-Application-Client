@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {getAllProducts} from "../apiQueries";
 import Product from "./Product";
-import FilterPanel from "./filterPanel";
+import ProductFilterPanel from "./productFilterPanel";
 
 const ProductsMain = () => {
 
@@ -30,7 +30,7 @@ const ProductsMain = () => {
         <div className="ProductsMain">
             <div className="row p-3">
                 <div className="col-12 col-md-6 col-lg-3">
-                    <FilterPanel filter={filterProducts}/>
+                    <ProductFilterPanel filter={filterProducts}/>
                 </div>
                 <div className="col-12 col-md-6 col-lg-9">
                     <div className="productsContainer">

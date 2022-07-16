@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-const FilterPanel = (props) => {
+const ProductFilterPanel = (props) => {
 
     const [name,setName] = useState("");
     const [description,setDescription] = useState("");
@@ -28,7 +28,7 @@ const FilterPanel = (props) => {
     }
 
     return (
-        <div className="FilterPanel border rounded">
+        <div className="ProductFilterPanel border rounded">
             <h4 className="label-form text-center mx-3 mt-3 p-2 font-weight-bold">Filter</h4>
             <form id="form" className="mx-3 mt-3" onSubmit={submitFilterForm}>
                 <div className="w-100 d-flex flex-center flex-column" id="messages">
@@ -89,4 +89,4 @@ const FilterPanel = (props) => {
     );
  }
 
-export default FilterPanel;
+export default ProductFilterPanel;
