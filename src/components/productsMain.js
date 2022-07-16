@@ -1,14 +1,19 @@
 import React, {useEffect, useState} from "react";
-import {getAllProducts} from "../apiQueries";
+import {getAllGroups, getAllProducts} from "../apiQueries";
 import Product from "./Product";
 import ProductFilterPanel from "./productFilterPanel";
 
 const ProductsMain = () => {
 
     const [products,setProducts] = useState([]);
+    const [groups,setGroups] = useState([]);
 
     const getProducts = async (filterArray) => {
         return await getAllProducts(filterArray);
+    }
+
+    const getGroups = async () => {
+        return await getAllGroups(["",""]);
     }
 
     const filterProducts = (filterArray) => {
@@ -23,15 +28,27 @@ const ProductsMain = () => {
         });
     }
 
+    const getGroupsForFiltering = () => {
+        getGroups().then( result => {
+            if(result.status===200){
+                setGroups(result.result);
+            } else {
+                setGroups([]);
+            }
+            console.log(result);
+        });
+    }
+
     useEffect(() => {
-        filterProducts(["","","","","","",""]);
+        filterProducts(["","","","","","","",""]);
+        getGroupsForFiltering();
     }, []);
 
     return(
         <div className="ProductsMain">
             <div className="row p-3">
                 <div className="col-12 col-md-6 col-lg-3">
-                    <ProductFilterPanel filter={filterProducts}/>
+                    <ProductFilterPanel filter={filterProducts} groups={groups}/>
                 </div>
                 <div className="col-12 col-md-6 col-lg-9">
                     <div className="productsContainer">

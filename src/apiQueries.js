@@ -2,10 +2,10 @@ const baseUrl = "https://localhost:8080/api/";
 const totalPriceUrl = `${baseUrl}statistics/total_price`;
 const productsBaseUrl = `${baseUrl}products`;
 const groupsBaseUrl = `${baseUrl}groups`;
-const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU4MDA4MDI2LCJleHAiOjE2NTgwMDg5MjZ9.ItqqZuJ8n4zLsvhM0rKYYtdtZLp0PDBFsT8GL_wdMJU';
+const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU4MDEyNjY1LCJleHAiOjE2NTgwMTM1NjV9.OsxYk2_rQCq0zMqVKrGoamKo84k80lrp8LiDDL0vHnw';
 
 const criteriaProductParams = ["textInName","textInDescription","textInManufacturer",
-    "lowerPrice","upperPrice","lowerQuantity","upperQuantity"];
+    "lowerPrice","upperPrice","lowerQuantity","upperQuantity","groupIds"];
 const criteriaProductLength = criteriaProductParams.length;
 
 const criteriaGroupParams = ["textInName","textInDescription"];
@@ -14,9 +14,12 @@ const criteriaGroupLength = criteriaGroupParams.length;
 function createProductCriteria(filterArray){
     if(filterArray.length!==criteriaProductLength) throw "Can't happen";
     let query = "";
-    for (let i = 0; i < criteriaProductLength; i++) {
+    console.log(`groupIds: ${filterArray[7]}`)
+    for (let i = 0; i < criteriaProductLength-1; i++) {
         if(filterArray[i]!=="") query = appendToQuery(query,`${criteriaProductParams[i]}=${filterArray[i]}`);
     }
+    const last = criteriaProductLength-1;
+    if(filterArray[last].length!==0) query = appendToQuery(query,`${criteriaProductParams[last]}=${filterArray[last]}`);
     return query;
 }
 
