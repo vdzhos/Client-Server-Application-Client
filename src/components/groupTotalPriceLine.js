@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getGroupTotalPrice} from "../apiQueries";
+import {getGroupTotalPrice, redirectToLogin} from "../apiQueries";
 
 const GroupTotalPriceLine = (props) => {
 
@@ -20,6 +20,7 @@ const GroupTotalPriceLine = (props) => {
             } else {
                 setTotalPrice(-1);
                 alert(result.result);
+                redirectToLogin(result);
             }
             console.log(result);
         })

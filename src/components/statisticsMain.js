@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getAllGroups, getGroupTotalPrice} from "../apiQueries";
+import {getAllGroups, getGroupTotalPrice, redirectToLogin} from "../apiQueries";
 import GroupTotalPriceLine from "./groupTotalPriceLine";
 
 const StatisticsMain = () => {
@@ -18,6 +18,8 @@ const StatisticsMain = () => {
                 setGroups(result.result);
             } else {
                 setGroups([]);
+                alert(result.result);
+                redirectToLogin(result);
             }
             console.log(result);
         });
@@ -31,6 +33,7 @@ const StatisticsMain = () => {
             } else {
                 setTotalPrice(-1);
                 alert(result.result);
+                redirectToLogin(result);
             }
             console.log(result);
         })

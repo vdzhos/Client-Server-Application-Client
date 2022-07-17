@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getAllGroups} from "../apiQueries";
+import {getAllGroups, redirectToLogin} from "../apiQueries";
 import Group from "./Group";
 import GroupFilterPanel from "./groupFilterPanel";
 
@@ -17,6 +17,8 @@ const GroupsMain = () => {
                 setGroups(result.result);
             } else {
                 setGroups([]);
+                alert(result.result);
+                redirectToLogin(result);
             }
             console.log(result);
         });

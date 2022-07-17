@@ -1,9 +1,15 @@
 import React from "react";
+import {jwtParam} from "../apiQueries";
 
 const NavBar = () => {
+
+    const clearLocalJwt = () => {
+        localStorage.removeItem(jwtParam);
+    }
+
     return(
         <nav className="navbar navbar-expand-md navbar-light bg-light">
-            <a className="navbar-brand ms-4" href="/">Storage</a>
+            <a className="navbar-brand ms-4" href="/products">Storage</a>
             <button className="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -30,6 +36,13 @@ const NavBar = () => {
                         <a className="nav-link" href="/create-group">Create group</a>
                     </li>
                 </ul>
+                <div className="ms-auto me-4">
+                    <ul className="navbar-nav mr-auto">
+                        <li className="nav-item">
+                            <a className="nav-link" href="/login" onClick={() => clearLocalJwt()}>Logout</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
     );

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getAllGroups, getAllProducts} from "../apiQueries";
+import {getAllGroups, getAllProducts, redirectToLogin} from "../apiQueries";
 import Product from "./Product";
 import ProductFilterPanel from "./productFilterPanel";
 
@@ -23,6 +23,7 @@ const ProductsMain = () => {
             } else {
                 setProducts([]);
                 alert(result.result);
+                redirectToLogin(result);
             }
             console.log(result);
         });
@@ -34,6 +35,8 @@ const ProductsMain = () => {
                 setGroups(result.result);
             } else {
                 setGroups([]);
+                alert(result.result);
+                redirectToLogin(result);
             }
             console.log(result);
         });
@@ -46,7 +49,7 @@ const ProductsMain = () => {
 
     return(
         <div className="ProductsMain">
-            <div className="row p-3">
+            <div className="row m-3">
                 <div className="col-12 col-md-6 col-lg-3">
                     <ProductFilterPanel filter={filterProducts} groups={groups}/>
                 </div>

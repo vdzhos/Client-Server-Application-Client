@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {createGroup, deleteGroupById, getGroupById, updateGroupById} from "../apiQueries";
+import {createGroup, deleteGroupById, getGroupById, redirectToLogin, updateGroupById} from "../apiQueries";
 import QuantityPanel from "./quantityPanel";
 
 const GroupPage = (props) => {
@@ -37,6 +37,7 @@ const GroupPage = (props) => {
                 window.location = `/groups/${result.result.id}`
             } else {
                 alert(result.result);
+                redirectToLogin(result);
             }
         })
     }
@@ -61,6 +62,7 @@ const GroupPage = (props) => {
                 alert("Group successfully updated!");
             } else {
                 alert(result.result);
+                redirectToLogin(result);
             }
         });
     }
@@ -77,6 +79,7 @@ const GroupPage = (props) => {
                window.location = "/groups"
            } else {
                alert(result.result);
+               redirectToLogin(result);
            }
         });
     }
@@ -95,6 +98,7 @@ const GroupPage = (props) => {
                     setName("");
                     setDescription("");
                     alert(result.result);
+                    redirectToLogin(result);
                 }
                 console.log(result);
             });

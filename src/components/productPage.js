@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {createProduct, deleteProductById, getAllGroups, getProductById, updateProductById} from "../apiQueries";
+import {
+    createProduct,
+    deleteProductById,
+    getAllGroups,
+    getProductById,
+    redirectToLogin,
+    updateProductById
+} from "../apiQueries";
 import QuantityPanel from "./quantityPanel";
 
 const ProductPage = (props) => {
@@ -47,6 +54,7 @@ const ProductPage = (props) => {
                 window.location = `/products/${result.result.id}`
             } else {
                 alert(result.result);
+                redirectToLogin(result);
             }
         })
     }
@@ -76,6 +84,7 @@ const ProductPage = (props) => {
                 alert("Product successfully updated!");
             } else {
                 alert(result.result);
+                redirectToLogin(result);
             }
         });
     }
@@ -92,6 +101,7 @@ const ProductPage = (props) => {
                window.location = "/products"
            } else {
                alert(result.result);
+               redirectToLogin(result);
            }
         });
     }
@@ -123,15 +133,17 @@ const ProductPage = (props) => {
                     let error = "";
                     if(res1.status===403 && res2.status===403){
                         error = res1.result;
+                        alert(error);
+                        redirectToLogin(res1);
                     } else {
                         if(res1.status!==200) error+=res1.result;
                         if(res2.status!==200) {
                             if(error!=="") error+='\n';
                             error+=res2.result;
                         }
+                        alert(error);
+                        window.location = "/products";
                     }
-                    alert(error);
-                    window.location = "/products";
                 }
                 console.log(res1);
                 console.log(res2);
@@ -148,7 +160,11 @@ const ProductPage = (props) => {
                     }
                 } else {
                     alert(result.result);
-                    window.location = "/products";
+                    if(result.status===403) {
+                        redirectToLogin(result);
+                    } else {
+                        window.location = "/products";
+                    }
                 }
             });
         }

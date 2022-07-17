@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {decreaseProductQuantity, getProductQuantity, increaseProductQuantity} from "../apiQueries";
+import {decreaseProductQuantity, getProductQuantity, increaseProductQuantity, redirectToLogin} from "../apiQueries";
 
 const QuantityPanel = (props) => {
 
@@ -42,6 +42,7 @@ const QuantityPanel = (props) => {
                             alert("Quantity successfully changed!");
                         } else {
                             alert(result.result);
+                            redirectToLogin(result);
                         }
                         setQuantity("");
                     });
@@ -51,6 +52,7 @@ const QuantityPanel = (props) => {
                 }
             } else {
                 alert(result.result);
+                redirectToLogin(result);
             }
         });
 
@@ -78,12 +80,14 @@ const QuantityPanel = (props) => {
                             alert("Quantity successfully changed!");
                         } else {
                             alert(result.result);
+                            redirectToLogin(result);
                         }
                         setQuantity("");
                     });
                 }
             } else {
                 alert(result.result);
+                redirectToLogin(result);
             }
         });
     }

@@ -2,7 +2,7 @@ const baseUrl = "https://localhost:8080/api/";
 const totalPriceUrl = `${baseUrl}statistics/total_price`;
 const productsBaseUrl = `${baseUrl}products`;
 const groupsBaseUrl = `${baseUrl}groups`;
-const jwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoidWEuY29tLnN1cHJhLmRyaWZ0IiwiaWF0IjoxNjU4MDEyNjY1LCJleHAiOjE2NTgwMTM1NjV9.OsxYk2_rQCq0zMqVKrGoamKo84k80lrp8LiDDL0vHnw';
+export const jwtParam = "Jwt";
 
 const criteriaProductParams = ["textInName","textInDescription","textInManufacturer",
     "lowerPrice","upperPrice","lowerQuantity","upperQuantity","groupIds"];
@@ -10,6 +10,10 @@ const criteriaProductLength = criteriaProductParams.length;
 
 const criteriaGroupParams = ["textInName","textInDescription"];
 const criteriaGroupLength = criteriaGroupParams.length;
+
+const jwt = () => {
+    return localStorage.getItem(jwtParam);
+}
 
 function createProductCriteria(filterArray){
     if(filterArray.length!==criteriaProductLength) throw "Can't happen";
@@ -46,7 +50,7 @@ export async function getAllProducts(filterArray){
         {
             method: 'GET',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             }
         });
     const result = { status: response.status };
@@ -68,7 +72,7 @@ export async function getProductById(id){
         {
             method: 'GET',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             }
         });
     const result = { status: response.status };
@@ -90,7 +94,7 @@ export async function deleteProductById(id){
         {
             method: 'DELETE',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             }
         });
     const result = { status: response.status };
@@ -110,7 +114,7 @@ export async function updateProductById(id, product){
         {
             method: 'PUT',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             },
             body: JSON.stringify(product)
         });
@@ -131,7 +135,7 @@ export async function createProduct(product){
         {
             method: 'POST',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             },
             body: JSON.stringify(product)
         });
@@ -154,7 +158,7 @@ export async function getProductQuantity(id){
         {
             method: 'GET',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             }
         });
     const result = { status: response.status };
@@ -176,7 +180,7 @@ export async function increaseProductQuantity(id, quantity){
         {
             method: 'POST',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             },
             body: JSON.stringify(quantity)
         });
@@ -199,7 +203,7 @@ export async function decreaseProductQuantity(id, quantity){
         {
             method: 'POST',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             },
             body: JSON.stringify(quantity)
         });
@@ -224,7 +228,7 @@ export async function getAllGroups(filterArray){
         {
             method: 'GET',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             }
         });
     const result = { status: response.status };
@@ -246,7 +250,7 @@ export async function getGroupById(id){
         {
             method: 'GET',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             }
         });
     const result = { status: response.status };
@@ -269,7 +273,7 @@ export async function getGroupTotalPrice(id){
         {
             method: 'GET',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             }
         });
     const result = { status: response.status };
@@ -278,7 +282,7 @@ export async function getGroupTotalPrice(id){
     } else {
         const json = await response.json();
         if(response.status===200){
-            result["result"] = json["total_price"];
+            result["result"] = json["total_price"].toFixed(2);
         } else {
             result["result"] = json["error"];
         }
@@ -291,7 +295,7 @@ export async function createGroup(group){
         {
             method: 'POST',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             },
             body: JSON.stringify(group)
         });
@@ -314,7 +318,7 @@ export async function updateGroupById(id, group){
         {
             method: 'PUT',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             },
             body: JSON.stringify(group)
         });
@@ -335,7 +339,7 @@ export async function deleteGroupById(id){
         {
             method: 'DELETE',
             headers: {
-                Jwt: jwt
+                Jwt: jwt()
             }
         });
     const result = { status: response.status };
@@ -348,4 +352,10 @@ export async function deleteGroupById(id){
         }
     }
     return result;
+}
+
+export function redirectToLogin(result) {
+    if(result.status===403) {
+        window.location = "/login"
+    }
 }
